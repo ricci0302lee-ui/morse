@@ -22,7 +22,6 @@ body{
   gap:18px;
 }
 
-/* 金屬板按鈕 */
 #beepBtn{
   width: 520px;
   max-width: 90vw;
@@ -45,12 +44,8 @@ body{
   font-size: clamp(13px, 2.4vw, 16px);
 
   -webkit-tap-highlight-color: transparent;
-
 }
 
-/* 按下效果 */
-
-/* 螺絲 */
 .screw{
   position:absolute;
   width:18px;
