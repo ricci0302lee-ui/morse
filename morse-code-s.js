@@ -54,5 +54,3 @@ btn.addEventListener("pointerdown", down);
 window.addEventListener("pointerup", up);
 window.addEventListener("pointercancel", up);
 btn.addEventListener("pointerleave", up);
-
-
