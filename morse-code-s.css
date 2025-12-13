@@ -1,0 +1,74 @@
+body{
+  margin:0;
+
+  /* 手機 100vh 問題解法 */
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:#a3a8b1;
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  -webkit-user-select:none;
+  user-select:none;
+
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+/* 金屬片按鈕 */
+#beepBtn{
+  width: 520px;
+  max-width: 92vw;
+
+  height: clamp(90px, 16vh, 120px);
+
+  border: 0;
+  border-radius: 22px;
+  cursor: pointer;
+
+  background: linear-gradient(180deg,
+    #d7dbe3 0%,
+    #b9c1cf 28%,
+    #9aa3b2 55%,
+    #6f7786 100%
+  );
+
+  position: relative;
+  color: rgba(0,0,0,.65);
+
+  font-weight: 100;
+  letter-spacing: 2px;
+  font-size: clamp(12px, 2.2vw, 15px);
+
+  user-select: none;
+  -webkit-user-select:none;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+
+/* 螺絲 */
+.screw{
+  position:absolute;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%,
+    #fff 0%,
+    #cfd5df 35%,
+    #7b8495 70%,
+    #596072 100%
+  );
+  box-shadow: inset 0 2px 3px rgba(0,0,0,.25);
+  pointer-events:none;
+}
+
+.s1{ left:16px; top:16px; }
+.s2{ right:16px; top:16px; }
+.s3{ left:16px; bottom:16px; }
+.s4{ right:16px; bottom:16px; }
