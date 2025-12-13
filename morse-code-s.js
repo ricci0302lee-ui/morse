@@ -1,14 +1,11 @@
-// ===== DOM =====
 const btn = document.getElementById("beepBtn");
 const morseTextEl = document.getElementById("morseText");
 const letterTextEl = document.getElementById("letterText");
 
-// 若抓不到元素，直接提示（避免「沒字」卻不知道原因）
 if (!btn || !morseTextEl || !letterTextEl) {
   console.error("找不到必要的元素：beepBtn / morseText / letterText");
 }
 
-// ===== Morse table =====
 const MORSE_TABLE = {
   ".-":"A","-...":"B","-.-.":"C","-..":"D",".":"E","..-.":"F",
   "--.":"G","....":"H","..":"I",".---":"J","-.-":"K",".-..":"L",
@@ -19,11 +16,9 @@ const MORSE_TABLE = {
   ".....":"5","-....":"6","--...":"7","---..":"8","----.":"9"
 };
 
-// ===== Timing (ms) =====
-const DOT_DASH_TIME = 180;  // < 180ms -> dot, else dash
-const LETTER_GAP = 450;     // 放開後超過這時間，就翻譯成一個字母
+const DOT_DASH_TIME = 180;
+const LETTER_GAP = 450;
 
-// ===== State =====
 let audioCtx = null;
 let oscillator = null;
 let pressing = false;
@@ -34,7 +29,6 @@ let morseAll = "";
 let textAll = "";
 let gapTimer = null;
 
-// ===== Render =====
 function render() {
   morseTextEl.textContent = morseAll.trim().length ? morseAll : "";
   letterTextEl.textContent = textAll.trim().length ? textAll : "";
@@ -67,20 +61,16 @@ function stopBeep() {
   oscillator = null;
 }
 
-// ===== Input handlers =====
 async function down(e) {
-  // 只接受左鍵（滑鼠）/ 觸控 pointer
   if (e.button !== undefined && e.button !== 0) return;
 
   e.preventDefault();
   pressing = true;
 
-  // 避免「移動/點別處也算按住」
   try { btn.setPointerCapture(e.pointerId); } catch {}
 
   btn.classList.add("is-down");
 
-  // 如果正在等字母結束，代表同一字母還沒結束
   if (gapTimer) { clearTimeout(gapTimer); gapTimer = null; }
 
   pressStart = performance.now();
@@ -126,12 +116,11 @@ function cancel() {
   stopBeep();
 }
 
-// ===== Events =====
 btn.addEventListener("pointerdown", down);
 btn.addEventListener("pointerup", up);
 btn.addEventListener("pointercancel", cancel);
 btn.addEventListener("pointerleave", cancel);
 window.addEventListener("blur", cancel);
 
-// 保險：有時候放開在視窗外
 window.addEventListener("pointerup", up);
+
