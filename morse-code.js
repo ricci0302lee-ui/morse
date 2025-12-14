@@ -1,10 +1,16 @@
-// ================= DOM =================
+// ===== DOM =====
 const btn = document.getElementById("beepBtn");
 const morseTextEl = document.getElementById("morseText");
 const letterTextEl = document.getElementById("letterText");
 const backBtn = document.getElementById("backBtn");
+const clearBtn = document.getElementById("clearBtn");
 
-// ================= Morse Table =================
+// 如果抓不到元素，直接在 console 提示（方便你排錯）
+if (!btn || !morseTextEl || !letterTextEl || !backBtn || !clearBtn) {
+  console.error("缺少必要元素：beepBtn / morseText / letterText / backBtn / clearBtn");
+}
+
+// ===== Morse Table =====
 const MORSE_TABLE = {
   ".-":"A","-...":"B","-.-.":"C","-..":"D",".":"E","..-.":"F",
   "--.":"G","....":"H","..":"I",".---":"J","-.-":"K",".-..":"L",
@@ -15,20 +21,18 @@ const MORSE_TABLE = {
   ".....":"5","-....":"6","--...":"7","---..":"8","----.":"9"
 };
 
-// ================= Timing (ms) =================
-const DOT_DASH_TIME = 180;   // 短 / 長
-const LETTER_GAP = 450;      // 字母間隔
+// ===== Timing (ms) =====
+const DOT_DASH_TIME = 180; // < 180 = dot
+const LETTER_GAP = 450;    // 放開後超過這時間→翻譯一個字母
 
-// ================= Audio =================
+// ===== Audio =====
 let audioCtx = null;
 let oscillator = null;
 
 async function ensureAudio(){
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === "suspended") {
-    try { await audioCtx.resume(); } catch(e){}
+    try { await audioCtx.resume(); } catch {}
   }
 }
 
@@ -45,50 +49,76 @@ function startBeep(){
 
 function stopBeep(){
   if (!oscillator) return;
-  try { oscillator.stop(); } catch(e){}
-  try { oscillator.disconnect(); } catch(e){}
+  try { oscillator.stop(); } catch {}
+  try { oscillator.disconnect(); } catch {}
   oscillator = null;
 }
 
-// ================= State =================
+// ===== State =====
 let pressing = false;
 let pressStart = 0;
 
-let currentMorse = "";      // 正在輸入中的一個字母
-let lettersMorse = [];      // 已完成字母的摩斯碼
-let lettersText = [];       // 已完成字母的翻譯
+let currentMorse = "";   // 正在打的這一個字母
+let lettersMorse = [];   // 已完成字母的摩斯碼（每一個字母一格）
+let lettersText  = [];   // 已完成字母的翻譯
 
 let gapTimer = null;
 
-// ================= Render =================
+// ===== Render =====
 function render(){
-  const morseAll = [...lettersMorse, currentMorse]
-    .filter(x => x.length)
-    .join(" ");
+  const morseAll = [...lettersMorse, currentMorse].filter(x => x.length).join(" ");
+  const textAll  = lettersText.join("");
 
-  const textAll = lettersText.join("");
-
-  morseTextEl.textContent = morseAll || "(尚未輸入)";
-  letterTextEl.textContent = textAll || "(尚未輸入)";
+  morseTextEl.textContent  = morseAll.length ? morseAll : "(尚未輸入)";
+  letterTextEl.textContent = textAll.length ? textAll : "(尚未輸入)";
 }
 render();
 
-// ================= Input =================
+// ===== Helpers =====
+function finalizeLetter(){
+  if (!currentMorse.length) return;
+  const letter = MORSE_TABLE[currentMorse] || "?";
+  lettersMorse.push(currentMorse);
+  lettersText.push(letter);
+  currentMorse = "";
+  render();
+}
+
+function backspace(){
+  // 先取消正在等待翻譯的 timer（不然會刪了又被自動補回）
+  if (gapTimer) { clearTimeout(gapTimer); gapTimer = null; }
+
+  if (currentMorse.length > 0) {
+    currentMorse = currentMorse.slice(0, -1);
+  } else if (lettersMorse.length > 0) {
+    lettersMorse.pop();
+    lettersText.pop();
+  }
+  render();
+}
+
+function clearAll(){
+  if (gapTimer) { clearTimeout(gapTimer); gapTimer = null; }
+  currentMorse = "";
+  lettersMorse = [];
+  lettersText = [];
+  render();
+}
+
+// ===== Input =====
 async function down(e){
-  // 只接受左鍵或觸控
-  if (e.button !== undefined && e.button !== 0) return;
+  if (e.button !== undefined && e.button !== 0) return; // 左鍵/觸控
 
   e.preventDefault();
   pressing = true;
 
+  // 防誤觸：捕捉 pointer
   try { btn.setPointerCapture(e.pointerId); } catch {}
 
   btn.classList.add("is-down");
 
-  if (gapTimer) {
-    clearTimeout(gapTimer);
-    gapTimer = null;
-  }
+  // 若正在等字母結束，代表你要繼續同一個字母
+  if (gapTimer) { clearTimeout(gapTimer); gapTimer = null; }
 
   pressStart = performance.now();
 
@@ -109,18 +139,13 @@ function up(e){
 
   const duration = performance.now() - pressStart;
   const symbol = duration < DOT_DASH_TIME ? "." : "-";
-
   currentMorse += symbol;
   render();
 
-  // 等一段時間，視為字母完成
+  // 放開後計時：一段時間沒再按，就把這個字母翻譯完成
   gapTimer = setTimeout(() => {
-    const letter = MORSE_TABLE[currentMorse] || "?";
-    lettersMorse.push(currentMorse);
-    lettersText.push(letter);
-    currentMorse = "";
+    finalizeLetter();
     gapTimer = null;
-    render();
   }, LETTER_GAP);
 }
 
@@ -131,36 +156,21 @@ function cancel(){
   stopBeep();
 }
 
-// ================= Backspace =================
-function backspace(){
-  if (gapTimer) {
-    clearTimeout(gapTimer);
-    gapTimer = null;
-  }
-
-  if (currentMorse.length > 0) {
-    // 刪正在輸入的 . 或 -
-    currentMorse = currentMorse.slice(0, -1);
-  } else if (lettersMorse.length > 0) {
-    // 刪上一個完整字母
-    lettersMorse.pop();
-    lettersText.pop();
-  }
-  render();
-}
-
-// ================= Events =================
+// ===== Events =====
 btn.addEventListener("pointerdown", down);
 btn.addEventListener("pointerup", up);
 btn.addEventListener("pointercancel", cancel);
 btn.addEventListener("pointerleave", cancel);
 window.addEventListener("blur", cancel);
+
+// 保險：放開跑到視窗外也能收到
 window.addEventListener("pointerup", up);
 
-// 退格按鈕
-if (backBtn) backBtn.addEventListener("click", backspace);
+// 退格 / 清除
+backBtn.addEventListener("click", backspace);
+clearBtn.addEventListener("click", clearAll);
 
-// 鍵盤 Backspace
+// 鍵盤 Backspace（桌機可用）
 window.addEventListener("keydown", (e) => {
   if (e.key === "Backspace") {
     e.preventDefault();
