@@ -1,6 +1,5 @@
 body{
   margin:0;
-  transform: scale(1.15);
   min-height:100vh;
   min-height:100dvh;
   display:flex;
@@ -11,8 +10,8 @@ body{
 
   -webkit-user-select:none;
   user-select:none;
-  overscroll-behavior: none;
-  touch-action: manipulation;
+  overscroll-behavior:none;
+  touch-action:manipulation;
 }
 
 .container{
@@ -22,39 +21,81 @@ body{
   gap:18px;
 }
 
-/* 金屬板按鈕 */
+/* ===== 金屬板按鈕 ===== */
 #beepBtn{
-  width: 520px;
-  max-width: 90vw;
-  height: 120px;
-  border: 0;
-  border-radius: 22px;
-  cursor: pointer;
+  width:520px;
+  max-width:92vw;
+  height:clamp(110px, 18vh, 150px);
+  border:none;
+  border-radius:26px;
+  cursor:pointer;
+  position:relative;
 
   background: linear-gradient(180deg,
-    #d7dbe3 0%,
-    #b9c1cf 28%,
-    #9aa3b2 55%,
-    #6f7786 100%
+    #eef1f6 0%,
+    #cfd6e2 28%,
+    #a8b0c0 55%,
+    #7e8798 100%
   );
 
-  position: relative;
-  color: rgba(0,0,0,0.6);
+  color: rgba(0,0,0,0.65);
   font-weight: 200;
   letter-spacing: 3px;
-  font-size: clamp(13px, 2.4vw, 16px);
+  font-size: clamp(14px, 2.6vw, 18px);
 
   -webkit-tap-highlight-color: transparent;
 
+  box-shadow:
+    0 18px 30px rgba(0,0,0,.35),
+    inset 0 2px 3px rgba(255,255,255,.9),
+    inset 0 -10px 18px rgba(0,0,0,.35);
+}
+
+/* 反光 */
+#beepBtn::before{
+  content:"";
+  position:absolute;
+  left:20px; right:20px; top:14px;
+  height:20px;
+  border-radius:999px;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,.75),
+    rgba(255,255,255,.18),
+    rgba(255,255,255,.06)
+  );
+  pointer-events:none;
+}
+
+/* 拉絲紋 */
+#beepBtn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:26px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255,255,255,.045),
+    rgba(255,255,255,.045) 1px,
+    rgba(0,0,0,.03) 1px,
+    rgba(0,0,0,.03) 2px
+  );
+  mix-blend-mode: overlay;
+  pointer-events:none;
 }
 
 /* 按下效果 */
+#beepBtn.is-down{
+  transform: translateY(4px);
+  box-shadow:
+    0 10px 18px rgba(0,0,0,.35),
+    inset 0 1px 2px rgba(255,255,255,.7),
+    inset 0 -14px 22px rgba(0,0,0,.45);
+}
 
 /* 螺絲 */
 .screw{
   position:absolute;
-  width:18px;
-  height:18px;
+  width:18px; height:18px;
   border-radius:50%;
   background: radial-gradient(circle at 30% 30%,
     #fff 0%,
@@ -65,37 +106,51 @@ body{
   box-shadow: inset 0 2px 3px rgba(0,0,0,.25);
   pointer-events:none;
 }
-
 .s1{ left:16px; top:16px; }
 .s2{ right:16px; top:16px; }
 .s3{ left:16px; bottom:16px; }
 .s4{ right:16px; bottom:16px; }
 
+/* ===== 顯示面板 ===== */
 .panel{
-  padding: 14px 18px;
-  border-radius: 12px;
-  min-width: min(520px, 92vw);
-  text-align: center;
-  font-size: 14px;
+  width:min(520px, 92vw);
+  background: rgba(255,255,255,.25);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius:14px;
+  padding:14px 16px;
+  text-align:center;
 }
 
+.row{
+  margin: 6px 0;
+  font-size: 14px;
+}
 .panel span{
   font-family: ui-monospace, Consolas, monospace;
 }
 
-.small{
-  margin-top: 8px;
-  font-size: 12px;
-  opacity: 0.8;
+.controls{
+  margin-top: 12px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
 }
 
-#backBtn{
-  border: none;
-  border-radius: 10px;
-  padding: 10px 14px;
-  cursor: pointer;
-  background: rgba(0,0,0,0.15);
+.controls button{
+  border:none;
+  border-radius:10px;
+  padding:10px 14px;
+  cursor:pointer;
+  background: rgba(0,0,0,.14);
+  color: rgba(0,0,0,.75);
+  font-weight: 700;
 }
-#backBtn:active{
+.controls button:active{
   transform: translateY(2px);
+}
+
+.hint{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.8;
 }
