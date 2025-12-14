@@ -32,7 +32,7 @@ function startBeep(){
 
   oscillator = audioCtx.createOscillator();
   oscillator.type = "square";
-  oscillator.frequency.value = 300;
+  oscillator.frequency.value = 400;
   oscillator.connect(audioCtx.destination);
   oscillator.start();
 }
@@ -131,4 +131,5 @@ window.addEventListener("pointerup", up);
 
 // 清除
 clearBtn.addEventListener("click", clearAll);
+
 
