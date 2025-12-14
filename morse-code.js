@@ -54,8 +54,8 @@ function startBeep() {
   if (oscillator) return;
 
   oscillator = audioCtx.createOscillator();
-  oscillator.type = "sine";
-  oscillator.frequency.value = 700;
+  oscillator.type = "square";
+  oscillator.frequency.value = 400;
   oscillator.connect(audioCtx.destination);
   oscillator.start();
 }
@@ -135,3 +135,4 @@ window.addEventListener("blur", cancel);
 
 // 保險：有時候放開在視窗外
 window.addEventListener("pointerup", up);
+
