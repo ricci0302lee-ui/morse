@@ -1,0 +1,126 @@
+body{
+  margin:0;
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#a3a8b1;
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  -webkit-user-select:none;
+  user-select:none;
+  overscroll-behavior:none;
+  touch-action:manipulation;
+}
+
+.container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:18px;
+}
+
+/* ===== 金屬板按鈕 ===== */
+#beepBtn{
+  width:520px;
+  max-width:85vw;
+  height: clamp(100px, 18vh, 140px);
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  position:relative;
+
+  background: linear-gradient(180deg,
+    #eef1f6 0%,
+    #cfd6e2 28%,
+    #a8b0c0 55%,
+    #7e8798 100%
+  );
+
+  color: rgba(0,0,0,0.65);
+  letter-spacing: 3px;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/* 螺絲 */
+.screw{
+  position:absolute;
+  width:18px; height:18px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%,
+    #fff 0%,
+    #cfd5df 35%,
+    #7b8495 70%,
+    #596072 100%
+  );
+  box-shadow: inset 0 2px 3px rgba(0,0,0,.25);
+  pointer-events:none;
+}
+.s1{ left:16px; top:16px; }
+.s2{ right:16px; top:16px; }
+.s3{ left:16px; bottom:16px; }
+.s4{ right:16px; bottom:16px; }
+
+/* ===== 顯示面板 ===== */
+/* ✅ 面板尺寸固定（至少不會因為字出現就縮） */
+.panel{
+  width: min(520px, 92vw);
+  background: rgba(198, 207, 221, 0.25);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: center;
+
+  /* ⭐ 關鍵：固定高度/或至少固定最小高度 */
+  min-height: 120px;   /* 你可改 110~150 看喜歡 */
+  box-sizing: border-box;
+}
+
+/* ✅ 每一列固定高度，避免內容變化導致上下跳 */
+/* 每一行整體水平、垂直置中 */
+.row{
+  margin: 6px 0;
+  font-size: 14px;
+
+  height: 22px;
+  line-height: 22px;
+
+  display: flex;
+  justify-content: center; /* ⭐ 整行置中 */
+  align-items: center;
+  gap: 6px;
+}
+
+/* 內容區塊：固定寬度 + 文字置中 */
+#morseText,
+#letterText{
+  display: inline-block;
+  min-width: 180px;   /* 保留空間避免跳動 */
+  text-align: center; /* ⭐ 文字水平置中 */
+  white-space: nowrap;
+  font-family: ui-monospace, Consolas, monospace;
+}
+.controls{
+  margin-top: 12px;
+  display:flex;
+  justify-content:center;
+}
+
+.controls button{
+  border:none;
+  border-radius:10px;
+  padding:10px 14px;
+  cursor:pointer;
+  background: rgba(0,0,0,.14);
+  color: rgba(0,0,0,.75);
+  font-weight: 700;
+}
+.controls button:active{ transform: translateY(2px); }
+
+.hint{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.8;
+}

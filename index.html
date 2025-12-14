@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>摩斯嗶聲器</title>
+  <link rel="stylesheet" href="mt.css">
+</head>
+
+<body>
+  <div class="container">
+    <button id="beepBtn" type="button">
+      MORSE
+      <span class="screw s1"></span><span class="screw s2"></span>
+      <span class="screw s3"></span><span class="screw s4"></span>
+    </button>
+
+    <div class="panel">
+      <div class="row"><b></b><span id="morseText"></span></div>
+      <div class="row"><b></b><span id="letterText"></span></div>
+
+      <div class="controls">
+        <button id="clearBtn" type="button">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="mt.js"></script>
+</body>
+</html>
